@@ -3,8 +3,8 @@ package seeds
 import (
 	"log"
 
-	"user-service/user-service/internal/core/domain/model"
-	"user-service/user-service/utils/conv"
+	"user-service/internal/core/domain/model"
+	"user-service/utils/conv"
 
 	"gorm.io/gorm"
 )

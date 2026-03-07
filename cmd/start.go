@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"user-service/user-service/internal/app"
+	"user-service/internal/app"
 
 	"github.com/spf13/cobra"
 )

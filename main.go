@@ -1,6 +1,6 @@
 package main
 
-import "user-service/user-service/cmd"
+import "user-service/cmd"
 
 func main() {
 	cmd.Execute()

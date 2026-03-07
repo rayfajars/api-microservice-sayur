@@ -2,7 +2,7 @@ package seeds
 
 import (
 	"log"
-	"user-service/user-service/internal/core/domain/model"
+	"user-service/internal/core/domain/model"
 
 	"gorm.io/gorm"
 )

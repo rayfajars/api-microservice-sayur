@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 	"errors"
-	"user-service/user-service/internal/core/domain/entity"
-	"user-service/user-service/internal/core/domain/model"
+	"user-service/internal/core/domain/entity"
+	"user-service/internal/core/domain/model"
 
 	"github.com/labstack/gommon/log"
 	"gorm.io/gorm"

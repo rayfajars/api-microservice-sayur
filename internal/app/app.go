@@ -7,11 +7,11 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-	"user-service/user-service/config"
-	"user-service/user-service/internal/adapter/handler"
-	"user-service/user-service/internal/adapter/repository"
-	"user-service/user-service/internal/core/service"
-	"user-service/user-service/utils/validator"
+	"user-service/config"
+	"user-service/internal/adapter/handler"
+	"user-service/internal/adapter/repository"
+	"user-service/internal/core/service"
+	"user-service/utils/validator"
 
 	"github.com/go-playground/validator/v10/translations/en"
 	"github.com/labstack/echo/v4"
@@ -27,7 +27,8 @@ func RunServer() {
 	}
 
 	userRepo := repository.NewUserRepository(db.DB)
-	userService := service.NewUserService(userRepo)
+	jwtService := service.NewJWTService(cfg)
+	userService := service.NewUserService(userRepo, cfg, jwtService)
 
 	e := echo.New()
 	e.Use(middleware.CORS())
@@ -40,7 +41,7 @@ func RunServer() {
 		return c.String(200, "OK")
 	})
 
-	handler.NewUserHandler(e, userService)
+	handler.NewUserHandler(e, userService, cfg)
 
 	go func() {
 		if cfg.App.AppPort == "" {

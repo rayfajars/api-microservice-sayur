@@ -2,10 +2,12 @@ package handler
 
 import (
 	"net/http"
-	"user-service/user-service/internal/adapter/handler/request"
-	"user-service/user-service/internal/adapter/handler/response"
-	"user-service/user-service/internal/core/domain/entity"
-	"user-service/user-service/internal/core/service"
+	"user-service/config"
+	"user-service/internal/adapter"
+	"user-service/internal/adapter/handler/request"
+	"user-service/internal/adapter/handler/response"
+	"user-service/internal/core/domain/entity"
+	"user-service/internal/core/service"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -80,11 +82,23 @@ func (u *userHandler) SignIn(c echo.Context) error {
 	return c.JSON(http.StatusOK, resp)
 }
 
-func NewUserHandler(e *echo.Echo, userService service.UserServiceInterface) UserHandlerInterface {
+func NewUserHandler(e *echo.Echo, userService service.UserServiceInterface, cfg *config.Config) UserHandlerInterface {
 	userHandler := &userHandler{userService: userService}
 
 	e.Use(middleware.Recover())
 	e.POST("/signin", userHandler.SignIn)
+
+	mid := adapter.NewMiddlewareAdapter(cfg)
+
+	adminGroup := e.Group("/admin", mid.CheckToken())
+	adminGroup.GET("/check", func(c echo.Context) error {
+		// return c.JSON(http.StatusOK, response.DefaultResponse{
+		// 	Message: "Success",
+		// 	Data:    "You are logged in",
+		// })
+
+		return c.String(200, "OK")
+	})
 
 	return userHandler
 }
