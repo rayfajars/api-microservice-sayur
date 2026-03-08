@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"user-service/config"
+	"user-service/internal/adapter/handler/response"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
@@ -24,17 +25,22 @@ func (m *middlewareAdapter) CheckToken() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			redisConn := config.NewRedisClient()
+			respErr := response.DefaultResponse{}
 			authHeader := c.Request().Header.Get("Authorization")
 			if authHeader == "" {
-				log.Errorf("[MiddlewareAdapter-1] CheckToken: missing or invalid authorization header")
-				return echo.NewHTTPError(http.StatusUnauthorized, "missing or invalid authorization header")
+				log.Errorf("[MiddlewareAdapter-1] CheckToken: %s", "missing or invalid token")
+				respErr.Message = "missing or invalid token"
+				respErr.Data = nil
+				return c.JSON(http.StatusUnauthorized, respErr)
 			}
 			tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 
 			getSession, err := redisConn.HGetAll(c.Request().Context(), tokenString).Result()
 			if err != nil || len(getSession) == 0 {
 				log.Errorf("[MiddlewareAdapter-2] CheckToken: %s", err.Error())
-				return echo.NewHTTPError(http.StatusUnauthorized, "missing or invalid or expired token")
+				respErr.Message = err.Error()
+				respErr.Data = nil
+				return c.JSON(http.StatusUnauthorized, respErr)
 			}
 
 			c.Set("user", getSession)

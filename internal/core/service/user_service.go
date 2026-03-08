@@ -54,7 +54,7 @@ func (u *userService) SignIn(ctx context.Context, req entity.UserEntity) (*entit
 	}
 
 	redisConn := config.NewRedisClient()
-	err = redisConn.HSet(ctx, user.Email, sessionData).Err()
+	err = redisConn.HSet(ctx, token, sessionData).Err()
 	if err != nil {
 		log.Errorf("[UserService-4] SignIn: %v", err)
 		return nil, "", err
