@@ -35,7 +35,7 @@ func (m *middlewareAdapter) CheckToken() echo.MiddlewareFunc {
 			}
 			tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 
-			getSession, err := redisConn.HGetAll(c.Request().Context(), tokenString).Result()
+			getSession, err := redisConn.Get(c.Request().Context(), tokenString).Result()
 			if err != nil || len(getSession) == 0 {
 				log.Errorf("[MiddlewareAdapter-2] CheckToken: %s", err.Error())
 				respErr.Message = err.Error()
